@@ -13,7 +13,7 @@ const PORT = 5000;
 const BASE_URL = 'http://www.boredapi.com/api/activity';
 const URI = 'mongodb+srv://admin:imbored@boredinator.wgeqqjc.mongodb.net/?retryWrites=true&w=majority'
 
-
+// class that holds the constructor for user object being used in this app
 class currentUser {
     constructor(name = '', price = '', accessibility = '') {
       this.name = name;
@@ -24,6 +24,8 @@ class currentUser {
 
 const newestUser = new currentUser();
 
+
+// The next few lines contain code handling the connection to mongodb + creating the user schema
 async function connect() {
     try {
         await mongoose.connect(URI);
@@ -34,8 +36,6 @@ async function connect() {
 }
 
 connect();
-const AccessibilityOptions = ["High", "Medium", "Low"];
-const PriceOptions = ["Free", "Low", "High"];
 
 const userSchema = new mongoose.Schema({
    name: String,
@@ -45,7 +45,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
@@ -79,6 +78,7 @@ function getPriceLabel(activity) {
     }
 }
 
+// helper function that takes a label and generates a range of prices suitable
 function getPriceRange(label) {
     if (label == "Free") {
         return "price=0";
@@ -89,6 +89,7 @@ function getPriceRange(label) {
     }
 }
 
+// helper function that takes a label and generates a range of accessibilities suitable
 function getAccessibilityRange(label) {
     if (label == "Low") {
         return "minaccessibility=0.76&maxaccessibility=1";
@@ -99,6 +100,7 @@ function getAccessibilityRange(label) {
     }
 }
 
+// redirects the homepage to /users route
 app.get('/', function (req, res) {
     res.redirect('/users');
 })
@@ -109,10 +111,12 @@ app.get('/', function (req, res) {
 //     const userPrice = prompt("Choose price from \'free', \'low\', and \'high\'");
 // }
 
+// gets user input
 app.get('/users', function (req, res) {
     res.sendFile(__dirname + '/user.html');
 })
 
+// saves the new user details to mongo db, and redirects to /activity endpoint
 app.post('/users', async (req, res) => {
     try {
       const { name, accessibility, price } = req.body;
@@ -131,17 +135,13 @@ app.post('/users', async (req, res) => {
     
 });  
 
-// app.post('/activity', function (req, res) {
-//     res.redirect('/activity');
-// })
-
+// takes input and returns suitable activities
 app.get('/activity', async (req, res) => {
     try {
-        console.log(newestUser.name);
+        // uses the newestUser initialized above to know how to filter activities
         const priceRange = getPriceRange(newestUser.price);
         const accessibilityRange = getAccessibilityRange(newestUser.accessibility);
         const response = await axios.get(`${BASE_URL}?${accessibilityRange}&${priceRange}`);
-        console.log(BASE_URL + accessibilityRange + priceRange);
         const activity = response.data;
 
         // modifies accessibility field in JSON response
