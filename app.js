@@ -10,8 +10,19 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 5000;
-const API_URL = 'http://www.boredapi.com/api/activity/';
+const BASE_URL = 'http://www.boredapi.com/api/activity';
 const URI = 'mongodb+srv://admin:imbored@boredinator.wgeqqjc.mongodb.net/?retryWrites=true&w=majority'
+
+
+class currentUser {
+    constructor(name = '', price = '', accessibility = '') {
+      this.name = name;
+      this.price = price;
+      this.accessibility = accessibility;
+    }
+}
+
+const newestUser = new currentUser();
 
 async function connect() {
     try {
@@ -68,6 +79,26 @@ function getPriceLabel(activity) {
     }
 }
 
+function getPriceRange(label) {
+    if (label == "Free") {
+        return "price = 0.0";
+    } else if (label == "Low") {
+        return "minprice=0.01&maxprice=0.49";
+    } else {
+        return "minprice=0.5&maxprice=1"
+    }
+}
+
+function getAccessibilityRange(label) {
+    if (label == "Low") {
+        return "minaccessibility=0.76&maxaccessibility=1";
+    } else if (label == "Medium") {
+        return "minaccessibility=0.26&maxaccessibility=0.75"
+    } else {
+        return "minaccessibility=0&maxaccessibility=0.25"
+    }
+}
+
 app.get('/', function (req, res) {
     res.redirect('/users');
 })
@@ -88,6 +119,9 @@ app.post('/users', async (req, res) => {
       console.log(req.body);
       const user = new User({ name, accessibility, price });
       await user.save();
+      newestUser.name = name;
+      newestUser.accessibility = accessibility;
+      newestUser.price = price;
     //   res.status(201).json(user);
       res.redirect('/activity');
     } catch (error) {
@@ -103,13 +137,11 @@ app.post('/users', async (req, res) => {
 
 app.get('/activity', async (req, res) => {
     try {
-        const newestUser = await User.findOne().sort({ createdAt: -1 }).exec();
-        const newestUserAccessibilityLabel = getAccessibilityLabel(newestUser.accessibility);
-        const newestUserPriceLabel = getPriceLabel(newestUser.price);
-
-        console.log(newestUserPriceLabel);
-
-        const response = await axios.get(API_URL);
+        console.log(newestUser.name);
+        const priceRange = getPriceRange(newestUser.price);
+        const accessibilityRange = getAccessibilityRange(newestUser.accessibility);
+        const response = await axios.get(BASE_URL + "?" + accessibilityRange + "&" + priceRange);
+        console.log(BASE_URL + accessibilityRange + priceRange);
         const activity = response.data;
 
         // modifies accessibility field in JSON response
