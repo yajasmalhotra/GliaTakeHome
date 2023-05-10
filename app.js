@@ -81,7 +81,7 @@ function getPriceLabel(activity) {
 
 function getPriceRange(label) {
     if (label == "Free") {
-        return "price = 0.0";
+        return "price=0";
     } else if (label == "Low") {
         return "minprice=0.01&maxprice=0.49";
     } else {
@@ -140,7 +140,7 @@ app.get('/activity', async (req, res) => {
         console.log(newestUser.name);
         const priceRange = getPriceRange(newestUser.price);
         const accessibilityRange = getAccessibilityRange(newestUser.accessibility);
-        const response = await axios.get(BASE_URL + "?" + accessibilityRange + "&" + priceRange);
+        const response = await axios.get(`${BASE_URL}?${accessibilityRange}&${priceRange}`);
         console.log(BASE_URL + accessibilityRange + priceRange);
         const activity = response.data;
 
