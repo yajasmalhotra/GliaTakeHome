@@ -8,17 +8,6 @@ const PORT = 5000;
 const API_URL = 'http://www.boredapi.com/api/activity/';
 app.use(bodyParser.json());
 
-const ACCESSIBILITIES = {
-    0.25: "high",
-    0.75: "medium", 
-    1:    "low"
-}
-
-const PRICES = {
-    0:    "free",
-    0.5:  "low",
-    1:    "high"
-}
 
 function getAccessibilityLabel(activity) {
     if (activity.accessibility <= 0.25 ) {
@@ -53,11 +42,12 @@ app.get('/activity', async (req, res) => {
 
         const accessibilityLabel = getAccessibilityLabel(activity);
         console.log(accessibilityLabel);
+        activity.accessibility = accessibilityLabel;
 
-        const pricelabel = getPriceLabel(activity);
-        console.log(pricelabel);
-
-        const activityLabelled = {activity, accessibility: accessibilityLabel, price: pricelabel}
+        const priceLabel = getPriceLabel(activity);
+        console.log(priceLabel);
+        activity.price = priceLabel;
+        const activityLabelled = {activity}
 
         res.json(activityLabelled);
 
