@@ -8,7 +8,7 @@ const PORT = 5000;
 const API_URL = 'http://www.boredapi.com/api/activity/';
 app.use(bodyParser.json());
 
-
+// helper function that takes activity and returns associated accessibility label
 function getAccessibilityLabel(activity) {
     if (activity.accessibility <= 0.25 ) {
         return "High";
@@ -19,6 +19,7 @@ function getAccessibilityLabel(activity) {
     }
 }
 
+// helper function that takes activity and returns associated price label
 function getPriceLabel(activity) {
     if (activity.price === 0) {
         return "Free";
@@ -38,15 +39,16 @@ app.get('/activity', async (req, res) => {
     try {
         const response = await axios.get(API_URL);
         const activity = response.data;
-        console.log(activity);
 
+        // modifies accessibility field in JSON response
         const accessibilityLabel = getAccessibilityLabel(activity);
-        console.log(accessibilityLabel);
         activity.accessibility = accessibilityLabel;
 
+        // modifies price field in JSON response
+
         const priceLabel = getPriceLabel(activity);
-        console.log(priceLabel);
         activity.price = priceLabel;
+
         const activityLabelled = {activity}
 
         res.json(activityLabelled);
