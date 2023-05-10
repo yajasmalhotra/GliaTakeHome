@@ -10,6 +10,10 @@ app.use(bodyParser.json());
 
 // helper function that takes activity and returns associated accessibility label
 function getAccessibilityLabel(activity) {
+    if (activity.accessibility == null) {
+        res.status(400).json({error: 'Accessibility value not available'});
+    }
+
     if (activity.accessibility <= 0.25 ) {
         return "High";
     } else if (activity.price <= 0.75) {
@@ -21,6 +25,10 @@ function getAccessibilityLabel(activity) {
 
 // helper function that takes activity and returns associated price label
 function getPriceLabel(activity) {
+    if (activity.price == null) {
+        res.status(400).json({error: 'Price value not available'});
+    }
+
     if (activity.price === 0) {
         return "Free";
     } else if (activity.price <= 0.5) {
@@ -45,13 +53,10 @@ app.get('/activity', async (req, res) => {
         activity.accessibility = accessibilityLabel;
 
         // modifies price field in JSON response
-
         const priceLabel = getPriceLabel(activity);
         activity.price = priceLabel;
 
-        const activityLabelled = {activity}
-
-        res.json(activityLabelled);
+        res.json(activity);
 
     } catch (error) {
         res.status(500).json({error: 'An error has occurred'});
