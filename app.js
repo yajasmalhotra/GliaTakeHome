@@ -54,7 +54,7 @@ app.get('/activity', async (req, res) => {
         res.json(activityLabelled);
 
     } catch (error) {
-        // res.status(500).json({error: 'An error has occurred'});
+        res.status(500).json({error: 'An error has occurred'});
     }
 
 });
