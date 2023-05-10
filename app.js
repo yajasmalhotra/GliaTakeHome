@@ -56,7 +56,7 @@ function getAccessibilityLabel(activity) {
 
     if (activity.accessibility <= 0.25 ) {
         return "High";
-    } else if (activity.price <= 0.75) {
+    } else if (activity.accessibility <= 0.75) {
         return "Medium";
     } else {
         return "Low";
