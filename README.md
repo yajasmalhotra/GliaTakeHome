@@ -10,4 +10,4 @@ You will now have an activity to take up your time. Have fun!
 If a friend would like to have their turn, click the back button to go back to the input page.
 
 Note: If you have put in a price criteria of high, you will receive ONLY high cost recommendations. Similarly, 
-if your accessibility criteria is low, you will receive ONLYL low accessibility recommendations. 
+if your accessibility criteria is low, you will receive ONLY low accessibility recommendations. 
