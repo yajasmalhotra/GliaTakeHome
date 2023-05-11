@@ -1,7 +1,6 @@
 import express from 'express';
 import axios from 'axios';
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -105,12 +104,6 @@ app.get('/', function (req, res) {
     res.redirect('/users');
 })
 
-// function getUserInfo(userName, userAccessibility, userPrice) {
-//     const userName = prompt("Enter your name");
-//     const userAccessibility = prompt("Choose a level of accessibility from \'low', \'medium\', and \'high\'");
-//     const userPrice = prompt("Choose price from \'free', \'low\', and \'high\'");
-// }
-
 // gets user input
 app.get('/users', function (req, res) {
     res.sendFile(__dirname + '/user.html');
@@ -126,11 +119,10 @@ app.post('/users', async (req, res) => {
       newestUser.name = name;
       newestUser.accessibility = accessibility;
       newestUser.price = price;
-    //   res.status(201).json(user);
       res.redirect('/activity');
     } catch (error) {
       console.error(error);
-      res.status(500).send('Server Error');
+      res.status(500).send('User could not be saved');
     }
     
 });  
